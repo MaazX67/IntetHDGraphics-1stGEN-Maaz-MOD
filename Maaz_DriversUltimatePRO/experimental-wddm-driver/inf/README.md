@@ -1,3 +1,5 @@
-# INF status
+# Installation status
 
-No installable INF is provided in this experimental folder. An INF must not be created until a matching kernel-mode `.sys` driver, service definition, hardware support table, and test-signing/release-signing plan exist.
+No INF is provided for this experimental skeleton. In particular, it contains no Intel PCI hardware IDs and no service installation section.
+
+Do not use the production `driver.inf` from `MaazXGPU` for this folder. That INF is not a valid replacement package for a kernel display driver.

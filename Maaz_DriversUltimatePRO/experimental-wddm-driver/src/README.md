@@ -1,5 +1,7 @@
-# Source status
+# Experimental kernel skeleton
 
-No kernel driver source is present here yet. This file prevents the folder from being mistaken for a working display driver.
+`MaazXGPU_experimental.c` is an inert WDM entry-point sample for WDK compilation tests. It deliberately returns `STATUS_NOT_SUPPORTED` and does not implement a display miniport.
 
-A future implementation must be based on WDK samples and verified against the exact Intel HD Graphics generation. Do not ship a `.sys` compiled from placeholder code.
+It must not be installed, assigned to a PCI device, or used as a replacement for the Intel display driver.
+
+A future real implementation would need separate, reviewed code for PnP/power callbacks, memory management, command submission, synchronization, interrupts, TDR recovery, and WDDM user-mode interfaces. Those parts are intentionally absent.
