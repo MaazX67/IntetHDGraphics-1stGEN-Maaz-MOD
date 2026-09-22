@@ -1,6 +1,6 @@
 @echo off
 setlocal
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-all.ps1" %*
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-all.ps1" -ProjectRoot "%~dp0..\.." -Clean -PackageZip %*
 if errorlevel 1 (
   echo.
   echo MaazXGPU build failed. Read the error above.
