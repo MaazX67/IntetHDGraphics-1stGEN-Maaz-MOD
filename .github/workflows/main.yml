@@ -1,15 +1,70 @@
-# .github/workflows/build.yml
 name: Build MaazXGPU Full Driver
-on: [push, workflow_dispatch]
+
+on:
+  push:
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: microsoft/setup-msbuild@v2
-      - run: cmake -B Build -S . -G "Visual Studio 17 2022" -A x64
-      - run: cmake --build Build --config Release
-      - uses: actions/upload-artifact@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up Vulkan SDK
+        uses: humbletim/setup-vulkan-sdk@v1.2.0
+        with:
+          vulkan-query-version: 1.3.290.0
+          vulkan-components: Vulkan-Headers, Vulkan-Loader
+          vulkan-use-cache: true
+
+      - name: Configure CMake
+        run: >-
+          cmake -B Maaz_DriversUltimatePRO/MaazXGPU/Build
+          -S Maaz_DriversUltimatePRO/MaazXGPU
+          -G "Visual Studio 17 2022"
+          -A x64
+
+      - name: Build Release
+        run: cmake --build Maaz_DriversUltimatePRO/MaazXGPU/Build --config Release --parallel
+
+      - name: Prepare artifact
+        run: |
+          $source = "Maaz_DriversUltimatePRO/MaazXGPU"
+          $release = Join-Path $source "Build/Release"
+          $artifact = "MaazXGPU_Full_Driver"
+          New-Item -ItemType Directory -Path $artifact -Force | Out-Null
+
+          foreach ($file in @("MaazXGPU.dll", "MaazXGPU.lib", "MaazXGPU_Tray.exe")) {
+            $candidate = Join-Path $release $file
+            if (Test-Path $candidate) {
+              Copy-Item $candidate $artifact -Force
+            }
+          }
+
+          foreach ($file in @("driver.inf", "README.txt", "BUILD-INSTRUCTIONS.md")) {
+            $candidate = Join-Path $source $file
+            if (Test-Path $candidate) {
+              Copy-Item $candidate $artifact -Force
+            }
+          }
+
+          if (-not (Get-ChildItem $artifact -File)) {
+            throw "No build artifacts were found in $release"
+          }
+
+          Get-ChildItem $artifact | Select-Object Name, Length
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
           name: MaazXGPU_Full_Driver
           path: MaazXGPU_Full_Driver
+          if-no-files-found: error
