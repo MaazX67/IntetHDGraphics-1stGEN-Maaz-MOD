@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(MaazXGPU VERSION 1.0.0 LANGUAGES CXX)
-
+project(MaazXGPU VERSION 1.2.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -8,34 +7,19 @@ if (NOT DEFINED VULKAN_SDK AND EXISTS "C:/VulkanSDK/1.4.357.0")
     set(VULKAN_SDK "C:/VulkanSDK/1.4.357.0")
 endif()
 find_package(Vulkan 1.3 REQUIRED)
-
 add_library(MaazXGPU SHARED
-    src/main.cpp
-    src/core/vulkan_core.cpp
-    src/gl/zink_gl.cpp
-    src/dx12/dx12_on_vk.cpp
-    src/hybrid/ram_vram.cpp
-    src/hybrid/ssd_cache.cpp
-    src/hybrid/cpu_worker.cpp)
+    src/main.cpp src/core/vulkan_core.cpp src/gl/zink_gl.cpp src/dx12/dx12_on_vk.cpp
+    src/hybrid/ram_vram.cpp src/hybrid/ssd_cache.cpp src/hybrid/cpu_worker.cpp)
 target_include_directories(MaazXGPU PRIVATE src)
 target_link_libraries(MaazXGPU PRIVATE Vulkan::Vulkan shlwapi opengl32)
 target_compile_options(MaazXGPU PRIVATE /W3 /EHsc /WX)
 target_compile_definitions(MaazXGPU PRIVATE WIN32_LEAN_AND_MEAN NOMINMAX)
-set_target_properties(MaazXGPU PROPERTIES OUTPUT_NAME "MaazXGPU")
-set_target_properties(MaazXGPU PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build")
-
-add_executable(MaazXGPU_Tray WIN32 src/tray/MaazXGPU_Tray.cpp)
+set_target_properties(MaazXGPU PROPERTIES OUTPUT_NAME "MaazXGPU" RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build" LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build" ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build")
+add_executable(MaazXGPU_Tray WIN32 src/tray/MaazXGPU_Tray.cpp src/perf/performance_manager.cpp)
+target_include_directories(MaazXGPU_Tray PRIVATE src)
 target_compile_options(MaazXGPU_Tray PRIVATE /W3 /EHsc /WX)
 target_compile_definitions(MaazXGPU_Tray PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX)
 target_link_libraries(MaazXGPU_Tray PRIVATE shell32 shlwapi user32 advapi32)
-set_target_properties(MaazXGPU_Tray PROPERTIES OUTPUT_NAME "MaazXGPU_Tray")
-set_target_properties(MaazXGPU_Tray PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build")
-
+set_target_properties(MaazXGPU_Tray PROPERTIES OUTPUT_NAME "MaazXGPU_Tray" RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build" LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build" ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build")
 install(TARGETS MaazXGPU MaazXGPU_Tray RUNTIME DESTINATION . LIBRARY DESTINATION .)
 install(FILES driver.inf DESTINATION .)
