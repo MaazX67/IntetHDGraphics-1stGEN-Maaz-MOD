@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
-project(MaazXGPU VERSION 1.0.0 LANGUAGES CXX)
+project(MaazXGPU VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 if (NOT DEFINED VULKAN_SDK AND EXISTS "C:/VulkanSDK/1.4.357.0")
     set(VULKAN_SDK "C:/VulkanSDK/1.4.357.0")
 endif()
@@ -27,7 +28,10 @@ set_target_properties(MaazXGPU PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Build")
 
-add_executable(MaazXGPU_Tray WIN32 src/tray/MaazXGPU_Tray.cpp)
+add_executable(MaazXGPU_Tray WIN32
+    src/tray/MaazXGPU_Tray.cpp
+    src/perf/performance_manager.cpp)
+target_include_directories(MaazXGPU_Tray PRIVATE src)
 target_compile_options(MaazXGPU_Tray PRIVATE /W3 /EHsc /WX)
 target_compile_definitions(MaazXGPU_Tray PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX)
 target_link_libraries(MaazXGPU_Tray PRIVATE shell32 shlwapi user32 advapi32)
