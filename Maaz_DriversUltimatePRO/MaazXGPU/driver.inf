@@ -1,0 +1,28 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=Display
+ClassGuid={4d36e968-e325-11ce-bfc1-08002be10318}
+Provider=%MaazXGPUProvider%
+DriverVer=09/21/2026,1.0.0.0
+CatalogFile=MaazXGPU.cat
+
+[Manufacturer]
+%MaazXGPUProvider%=MaazXGPU,NTamd64
+
+[MaazXGPU.NTamd64]
+%MaazXGPU%=MaazXGPU_Device,PCI\VEN_8086&DEV_5916
+%MaazXGPU%=MaazXGPU_Device,PCI\VEN_8086&DEV_0046
+%MaazXGPU%=MaazXGPU_Device,PCI\VEN_8086&DEV_0102
+%MaazXGPU%=MaazXGPU_Device,PCI\VEN_8086&DEV_0116
+%MaazXGPU%=MaazXGPU_Device,PCI\VEN_8086&DEV_0166
+
+[MaazXGPU_Device]
+Include=display.inf
+Needs=MS_EDP_DISPLAY
+
+[MaazXGPU_Device.Services]
+AddService=,0x00000002
+
+[Strings]
+MaazXGPUProvider="MaazXGPU"
+MaazXGPU="MaazXGPU - Pure Performance Driver for Vostro 3300"
